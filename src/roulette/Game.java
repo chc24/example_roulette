@@ -44,15 +44,15 @@ public class Game {
     public void play (Gambler player) {
         int amount = ConsoleReader.promptRange("How much do you want to bet",
                                                0, player.getBankroll());
-        int whichBet = promptForBet();
-        String betChoice = placeBet(whichBet);
+        Bet whichBet = promptForBet();
+        String betChoice = whichBet.placeBet();
 
         System.out.print("Spinning ...");
         myWheel.spin();
         System.out.println(String.format("Dropped into %s %d", myWheel.getColor(), myWheel.getNumber()));
         if (betIsMade(whichBet, betChoice)) {
             System.out.println("*** Congratulations :) You win ***");
-            amount *= myPossibleBets[whichBet].getOdds();
+            amount *= whichBet.getOdds();
         }
         else {
             System.out.println("*** Sorry :( You lose ***");
@@ -64,12 +64,12 @@ public class Game {
     /**
      * Prompt the user to make a bet from a menu of choices.
      */
-    private int promptForBet () {
+    private Bet promptForBet () {
         System.out.println("You can make one of the following types of bets:");
         for (int k = 0; k < myPossibleBets.length; k++) {
             System.out.println(String.format("%d) %s", (k + 1), myPossibleBets[k].getDescription()));
         }
-        return ConsoleReader.promptRange("Please make a choice", 1, myPossibleBets.length) - 1;
+        return myPossibleBets[ConsoleReader.promptRange("Please make a choice", 1, myPossibleBets.length) - 1];
     }
 
     /**
@@ -77,21 +77,19 @@ public class Game {
      *
      * @param whichBet specific bet chosen by the user
      */
-    private String placeBet (int whichBet) {
-        String result = "";
-        if (whichBet == 0) {
-            result = ConsoleReader.promptOneOf("Please bet", Wheel.BLACK, Wheel.RED);
-        }
-        else if (whichBet == 1) {
-            result = ConsoleReader.promptOneOf("Please bet", "even", "odd");
-        }
-        else if (whichBet == 2) {
-            result = "" + ConsoleReader.promptRange("Enter first of three consecutive numbers",
-                                                    1, Wheel.NUM_SPOTS - 3);
-        }
-        System.out.println();
-        return result;
-    }
+   // private String placeBet (Bet whichBet) {
+//        if (whichBet == 0) {
+//            result = ConsoleReader.promptOneOf("Please bet", Wheel.BLACK, Wheel.RED);
+//        }
+//        else if (whichBet == 1) {
+//            result = ConsoleReader.promptOneOf("Please bet", "even", "odd");
+//        }
+//        else if (whichBet == 2) {
+//            result = "" + ConsoleReader.promptRange("Enter first of three consecutive numbers",
+//                                                    1, Wheel.NUM_SPOTS - 3);
+//        }
+    //    return whichBet.placeBet();
+    //}
 
     /**
      * Checks if the given bet is won or lost given user's choice and result of spinning the wheel.
@@ -99,7 +97,7 @@ public class Game {
      * @param whichBet specific bet chosen by the user
      * @param betChoice specific value user chose to try to win the bet
      */
-    private boolean betIsMade (int whichBet, String betChoice) {
+    private boolean betIsMade (Bet whichBet, String betChoice) {
         if (whichBet == 0) {
             return myWheel.getColor().equals(betChoice);
         }

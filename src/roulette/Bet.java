@@ -34,4 +34,8 @@ public abstract class Bet {
     public String getDescription () {
         return myDescription;
     }
+    
+    public abstract String placeBet();
+    
+    public abstract boolean betIsMade();
 }
